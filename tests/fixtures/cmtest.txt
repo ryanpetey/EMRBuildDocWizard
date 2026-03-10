@@ -1,0 +1,28 @@
+File Format: Text [1]
+Batch Comment:
+#CM Title: FMLA smartlist update
+#CM Comment: T752-20029: FMLA smartlist update
+RECORDS
+CER,578060
+#   FMLA IB Column - Type of request
+HIC,9992021
+#   KPWA FMLA ACTIVITY
+HLX,1193226
+#   FMLA TYPE OF LEAVE REQUESTED CATEGORY
+
+DEPENDENCIES - RECORDS
+E2N,2100156400
+#   FMLA
+#   Direct Parent:   INI: HIC    ID: 9992021    Name: KPWA FMLA ACTIVITY   Item: 830    Special Handling: Item
+#   Direct Parent:   INI: HIC    ID: 9992021    Name: KPWA FMLA ACTIVITY   Item: 940    Special Handling: Item
+#   Group: Existing Records
+EMP, PETERX1
+#   PETERSON, RYAN
+#   Direct Parent:   INI: HLX    ID: 1193226    Name: FMLA TYPE OF LEAVE REQUESTED CATEGORY   DAT: 99999    Item: 184    Line: 1
+#   Direct Parent:   INI: HLX    ID: 1193226    Name: FMLA TYPE OF LEAVE REQUESTED CATEGORY   DAT: 99999    Item: 184    Line: 2
+#   Group: Existing Records
+FCT,9001
+#   In Basket
+#   Direct Parent:   INI: CER    ID: 578060    Name: FMLA IB Column - Type of request   DAT: 99999    Item: 35    Line: 1
+#   Direct Parent:   INI: HIC    ID: 9992021    Name: KPWA FMLA ACTIVITY   DAT: 99999    Item: 955    Line: 1
+#   Group: Existing Records
