@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from .models import ParentLink, ParsedPackage, Record
+from .models import ParsedPackage, Record
 
 SECTION_SELECTED = "RECORDS"
 SECTION_LINKED = "DEPENDENCIES - RECORDS"

@@ -1,10 +1,16 @@
 File Format: Text [1]
-Batch Comment:
+Batch Comment: 
 #CM Title: FMLA smartlist update
 #CM Comment: T752-20029: FMLA smartlist update
 RECORDS
 CER,578060
 #   FMLA IB Column - Type of request
+CER,579395
+#   FMLA Response status
+CER,579396
+#   FMLA IB Sender is Epic User or PAR
+ELT,31391
+#   FMLA_approval
 HIC,9992021
 #   KPWA FMLA ACTIVITY
 HLX,1193226
@@ -16,13 +22,105 @@ E2N,2100156400
 #   Direct Parent:   INI: HIC    ID: 9992021    Name: KPWA FMLA ACTIVITY   Item: 830    Special Handling: Item
 #   Direct Parent:   INI: HIC    ID: 9992021    Name: KPWA FMLA ACTIVITY   Item: 940    Special Handling: Item
 #   Group: Existing Records
+EMP,      1
+#   EPIC, USER
+#   Direct Parent:   INI: CER    ID: 579396    Name: FMLA IB Sender is Epic User or PAR   Item: 258    Special Handling: Item
+#   Group: Existing Records
 EMP, PETERX1
 #   PETERSON, RYAN
 #   Direct Parent:   INI: HLX    ID: 1193226    Name: FMLA TYPE OF LEAVE REQUESTED CATEGORY   DAT: 99999    Item: 184    Line: 1
 #   Direct Parent:   INI: HLX    ID: 1193226    Name: FMLA TYPE OF LEAVE REQUESTED CATEGORY   DAT: 99999    Item: 184    Line: 2
+#   Direct Parent:   INI: HLX    ID: 1193226    Name: FMLA TYPE OF LEAVE REQUESTED CATEGORY   DAT: 99999    Item: 184    Line: 3
+#   Direct Parent:   INI: HLX    ID: 1193226    Name: FMLA TYPE OF LEAVE REQUESTED CATEGORY   DAT: 99999    Item: 184    Line: 4
+#   Direct Parent:   INI: HLX    ID: 1193226    Name: FMLA TYPE OF LEAVE REQUESTED CATEGORY   DAT: 99999    Item: 184    Line: 5
+#   Direct Parent:   INI: HLX    ID: 1193226    Name: FMLA TYPE OF LEAVE REQUESTED CATEGORY   DAT: 99999    Item: 184    Line: 6
+#   Direct Parent:   INI: HLX    ID: 1193226    Name: FMLA TYPE OF LEAVE REQUESTED CATEGORY   DAT: 99999    Item: 184    Line: 7
+#   Group: Existing Records
+ETX,37897
+#   XXFMLAPROVIDERREVISION
+#   Direct Parent:   INI: ELT    ID: 31391    Name: FMLA_approval   Item: 200    Special Handling: Item
 #   Group: Existing Records
 FCT,9001
 #   In Basket
 #   Direct Parent:   INI: CER    ID: 578060    Name: FMLA IB Column - Type of request   DAT: 99999    Item: 35    Line: 1
+#   Direct Parent:   INI: CER    ID: 579395    Name: FMLA Response status   DAT: 99999    Item: 35    Line: 1
+#   Direct Parent:   INI: CER    ID: 579396    Name: FMLA IB Sender is Epic User or PAR   DAT: 99999    Item: 35    Line: 1
+#   Group: Existing Records
+HCX,2
+#   ENCOUNTER
+#   Direct Parent:   INI: CER    ID: 578060    Name: FMLA IB Column - Type of request   Item: 252    Special Handling: Item
+#   Direct Parent:   INI: CER    ID: 579395    Name: FMLA Response status   Item: 252    Special Handling: Item
+#   Direct Parent:   INI: CER    ID: 579396    Name: FMLA IB Sender is Epic User or PAR   Item: 252    Special Handling: Item
+#   Group: Existing Records
+HFP,1550
+#   PATIENT
+#   Direct Parent:   INI: CER    ID: 578060    Name: FMLA IB Column - Type of request   DAT: 99999    Item: 185    Line: 1
+#   Direct Parent:   INI: CER    ID: 578060    Name: FMLA IB Column - Type of request   DAT: 99999    Item: 251    Line: 1
+#   Direct Parent:   INI: CER    ID: 578060    Name: FMLA IB Column - Type of request   DAT: 99999    Item: 600    Line: 1
+#   Direct Parent:   INI: CER    ID: 579395    Name: FMLA Response status   DAT: 99999    Item: 185    Line: 1
+#   Direct Parent:   INI: CER    ID: 579395    Name: FMLA Response status   DAT: 99999    Item: 251    Line: 1
+#   Direct Parent:   INI: CER    ID: 579395    Name: FMLA Response status   DAT: 99999    Item: 600    Line: 1
+#   Direct Parent:   INI: CER    ID: 579396    Name: FMLA IB Sender is Epic User or PAR   DAT: 99999    Item: 251    Line: 4
+#   Direct Parent:   INI: CER    ID: 579396    Name: FMLA IB Sender is Epic User or PAR   DAT: 99999    Item: 600    Line: 6
+#   Group: Existing Records
+HFP,32408
+#   ATTACHED GENERAL QUESTIONNAIRES
+#   Direct Parent:   INI: CER    ID: 579396    Name: FMLA IB Sender is Epic User or PAR   DAT: 99999    Item: 251    Line: 3
+#   Direct Parent:   INI: CER    ID: 579396    Name: FMLA IB Sender is Epic User or PAR   DAT: 99999    Item: 600    Line: 5
+#   Group: Existing Records
+HFP,34226
+#   MESSAGE SENDER
+#   Direct Parent:   INI: CER    ID: 579396    Name: FMLA IB Sender is Epic User or PAR   DAT: 99999    Item: 251    Line: 1
+#   Direct Parent:   INI: CER    ID: 579396    Name: FMLA IB Sender is Epic User or PAR   DAT: 99999    Item: 251    Line: 2
+#   Direct Parent:   INI: CER    ID: 579396    Name: FMLA IB Sender is Epic User or PAR   DAT: 99999    Item: 600    Line: 1
+#   Group: Existing Records
+HFP,34230
+#   MYCHART MESSAGE ID
+#   Direct Parent:   INI: CER    ID: 579396    Name: FMLA IB Sender is Epic User or PAR   DAT: 99999    Item: 251    Line: 3
+#   Direct Parent:   INI: CER    ID: 579396    Name: FMLA IB Sender is Epic User or PAR   DAT: 99999    Item: 600    Line: 4
+#   Group: Existing Records
+HFP,42563
+#   SMARTDATA ELEMENT VALUE
+#   Direct Parent:   INI: CER    ID: 578060    Name: FMLA IB Column - Type of request   DAT: 99999    Item: 185    Line: 1
+#   Direct Parent:   INI: CER    ID: 578060    Name: FMLA IB Column - Type of request   DAT: 99999    Item: 251    Line: 1
+#   Direct Parent:   INI: CER    ID: 578060    Name: FMLA IB Column - Type of request   DAT: 99999    Item: 600    Line: 2
+#   Direct Parent:   INI: CER    ID: 579396    Name: FMLA IB Sender is Epic User or PAR   DAT: 99999    Item: 251    Line: 4
+#   Direct Parent:   INI: CER    ID: 579396    Name: FMLA IB Sender is Epic User or PAR   DAT: 99999    Item: 600    Line: 7
+#   Group: Existing Records
+HFP,100723
+#   C_USER_SECURITY_TEMPLATE
+#   Direct Parent:   INI: CER    ID: 579396    Name: FMLA IB Sender is Epic User or PAR   DAT: 99999    Item: 251    Line: 2
+#   Direct Parent:   INI: CER    ID: 579396    Name: FMLA IB Sender is Epic User or PAR   DAT: 99999    Item: 600    Line: 2
+#   Group: Existing Records
+HFP,101337
+#   C_SMARTDATA ELEMENT VALUE
+#   Direct Parent:   INI: CER    ID: 579395    Name: FMLA Response status   DAT: 99999    Item: 185    Line: 1
+#   Direct Parent:   INI: CER    ID: 579395    Name: FMLA Response status   DAT: 99999    Item: 251    Line: 1
+#   Direct Parent:   INI: CER    ID: 579395    Name: FMLA Response status   DAT: 99999    Item: 600    Line: 2
+#   Group: Existing Records
+HFP,101751
+#   C_USER NAME
+#   Direct Parent:   INI: CER    ID: 579396    Name: FMLA IB Sender is Epic User or PAR   DAT: 99999    Item: 251    Line: 2
+#   Direct Parent:   INI: CER    ID: 579396    Name: FMLA IB Sender is Epic User or PAR   DAT: 99999    Item: 600    Line: 3
+#   Group: Existing Records
+HLX,1067799
+#   FMLA
+#   Direct Parent:   INI: HLX    ID: 1193226    Name: FMLA TYPE OF LEAVE REQUESTED CATEGORY   Item: 155    Special Handling: Item
+#   Group: Existing Records
+HLX,1161181
+#   FMLA TYPE OF REQUEST
+#   Direct Parent:   INI: CER    ID: 579396    Name: FMLA IB Sender is Epic User or PAR   Item: 252    Special Handling: Item
+#   Group: Existing Records
+HLX,1167866
+#   FMLA APPROVAL RESPONSE
+#   Direct Parent:   INI: CER    ID: 579395    Name: FMLA Response status   Item: 252    Special Handling: Item
+#   Direct Parent:   INI: ELT    ID: 31391    Name: FMLA_approval   Item: 210    Special Handling: Item
+#   Group: Existing Records
+LPP,102504
+#   ENABLE FOR ALL NON-TYPE-3 ENCOUNTERS (in basket button)
 #   Direct Parent:   INI: HIC    ID: 9992021    Name: KPWA FMLA ACTIVITY   DAT: 99999    Item: 955    Line: 1
+#   Group: Existing Records
+LQF,10000200
+#   FMLA FF QUESTIONNAIRE
+#   Direct Parent:   INI: CER    ID: 579396    Name: FMLA IB Sender is Epic User or PAR   Item: 258    Special Handling: Item
 #   Group: Existing Records
