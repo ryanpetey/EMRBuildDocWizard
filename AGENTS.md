@@ -35,3 +35,13 @@ HLX 1193226
 7. Prefer fixing the parser model rather than patching output code.
 
 8. Ensure parser.py, models.py, exporter.py, and cli.py remain consistent.
+
+
+Change scope rules:
+- Only modify files that are necessary for the requested fix.
+- Do not reformat, rename, or touch unrelated files.
+- Before committing, run:
+  git status --short
+  git diff --name-only
+- If unrelated files are modified, revert them before finishing.
+- In the final response, list every changed file and why it changed.
