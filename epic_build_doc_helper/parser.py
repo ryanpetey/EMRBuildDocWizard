@@ -3,35 +3,27 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from .models import ParsedPackage, Record
+from .models import ParentLink, ParsedPackage, Record
 
 SECTION_SELECTED = "RECORDS"
 SECTION_LINKED = "DEPENDENCIES - RECORDS"
 
 META_PATTERNS = {
-    "package_title": re.compile(r"^\s*package\s+title\s*[:=]\s*(.+)$", re.IGNORECASE),
-    "package_comment": re.compile(r"^\s*package\s+comment\s*[:=]\s*(.+)$", re.IGNORECASE),
+    "package_title": re.compile(r"^\s*(?:CM\s*Title|package\s+title)\s*[:=]\s*(.+)$", re.IGNORECASE),
+    "package_comment": re.compile(r"^\s*(?:CM\s*Comment|package\s+comment)\s*[:=]\s*(.+)$", re.IGNORECASE),
     "ini": re.compile(r"^\s*ini\s*[:=]\s*(.+)$", re.IGNORECASE),
 }
 
-KEY_PATTERNS = {
-    "group": re.compile(r"^\s*group\s*[:=]\s*(.+)$", re.IGNORECASE),
-    "ini": re.compile(r"^\s*ini\s*[:=]\s*(.+)$", re.IGNORECASE),
-    "record_id": re.compile(r"^\s*(?:record\s*)?(?:id|ien)\s*[:=]\s*(.+)$", re.IGNORECASE),
-    "record_name": re.compile(r"^\s*(?:record\s*)?name\s*[:=]\s*(.+)$", re.IGNORECASE),
-    "dat": re.compile(r"^\s*dat\s*[:=]\s*(.+)$", re.IGNORECASE),
-    "item": re.compile(r"^\s*item\s*[:=]\s*(.+)$", re.IGNORECASE),
-    "line": re.compile(r"^\s*line\s*[:=]\s*(.+)$", re.IGNORECASE),
-    "special_handling": re.compile(r"^\s*special\s+handling\s*[:=]\s*(.+)$", re.IGNORECASE),
-}
-
-DIRECT_PARENT_PATTERN = re.compile(
-    r"^\s*direct\s+parent\s*[:=]\s*(?P<parent_ini>[^|,;]+?)\s+"
-    r"(?P<parent_id>\S+)\s+(?P<parent_name>.+)$",
-    re.IGNORECASE,
-)
+DIRECT_PARENT_INI = re.compile(r"INI\s*:\s*(\S+)", re.IGNORECASE)
+DIRECT_PARENT_ID = re.compile(r"(?:ID|IEN)\s*:\s*(\S+)", re.IGNORECASE)
+DIRECT_PARENT_NAME = re.compile(r"Name\s*:\s*(.+?)(?=\s+(?:DAT|Item|Line|Special\s+Handling)\s*:|$)", re.IGNORECASE)
+DIRECT_PARENT_DAT = re.compile(r"DAT\s*:\s*(\S+)", re.IGNORECASE)
+DIRECT_PARENT_ITEM = re.compile(r"Item\s*:\s*(\S+)", re.IGNORECASE)
+DIRECT_PARENT_LINE = re.compile(r"Line\s*:\s*(\S+)", re.IGNORECASE)
+DIRECT_PARENT_SPECIAL = re.compile(r"Special\s+Handling\s*:\s*(.+)$", re.IGNORECASE)
 
 INLINE_PATTERN = re.compile(r"(INI|ID|IEN|NAME|GROUP|DAT|ITEM|LINE)\s*[:=]\s*([^;|,]+)", re.IGNORECASE)
+RECORD_LINE_PATTERN = re.compile(r"^\s*([A-Z0-9]+)\s*,\s*(.+?)\s*$")
 
 
 def _section_from_line(line: str) -> str | None:
