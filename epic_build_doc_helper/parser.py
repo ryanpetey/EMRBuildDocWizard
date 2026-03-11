@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from .models import ParentLink, ParsedPackage, Record
+from .models import ParsedPackage, Record
 
 SECTION_SELECTED = "RECORDS"
 SECTION_LINKED = "DEPENDENCIES - RECORDS"
@@ -21,7 +21,7 @@ DIRECT_PARENT_DAT = re.compile(r"DAT\s*:\s*(\S+)", re.IGNORECASE)
 DIRECT_PARENT_ITEM = re.compile(r"Item\s*:\s*(\S+)", re.IGNORECASE)
 DIRECT_PARENT_LINE = re.compile(r"Line\s*:\s*(\S+)", re.IGNORECASE)
 DIRECT_PARENT_SPECIAL = re.compile(r"Special\s+Handling\s*:\s*(.+)$", re.IGNORECASE)
-DIRECT_PARENT_PATTERN = re.compile(r"^\s*direct\s+parent\s*:", re.IGNORECASE)
+
 INLINE_PATTERN = re.compile(r"(INI|ID|IEN|NAME|GROUP|DAT|ITEM|LINE)\s*[:=]\s*([^;|,]+)", re.IGNORECASE)
 RECORD_LINE_PATTERN = re.compile(r"^\s*([A-Z0-9]+)\s*,\s*(.+?)\s*$")
 
@@ -35,46 +35,12 @@ def _section_from_line(line: str) -> str | None:
     return None
 
 
-def _clean_comment_prefix(line: str) -> str:
-    stripped = line.strip()
-    if stripped.startswith("#"):
-        stripped = stripped[1:].strip()
-    return stripped
-
-
 def _new_record(section: str) -> Record:
-    return Record(section=section, selected_flag=section == SECTION_SELECTED, linked_flag=section == SECTION_LINKED)
-
-
-def _parse_direct_parent(payload: str) -> ParentLink:
-    text = _clean_comment_prefix(payload)
-    if text.lower().startswith("direct parent"):
-        _, text = text.split(":", 1)
-    text = text.strip()
-
-    def get(pattern: re.Pattern[str]) -> str:
-        m = pattern.search(text)
-        return m.group(1).strip() if m else ""
-
-    parent_ini = get(DIRECT_PARENT_INI)
-    parent_id = get(DIRECT_PARENT_ID)
-    parent_name = get(DIRECT_PARENT_NAME)
-    parsed = ParentLink(
-        parent_ini=parent_ini,
-        parent_id=parent_id,
-        parent_name=parent_name,
-        dat=get(DIRECT_PARENT_DAT),
-        item=get(DIRECT_PARENT_ITEM),
-        line=get(DIRECT_PARENT_LINE),
-        special_handling=get(DIRECT_PARENT_SPECIAL),
+    return Record(
+        section=section,
+        selected_flag=section == SECTION_SELECTED,
+        linked_flag=section == SECTION_LINKED,
     )
-
-    if not any([parent_ini, parent_id, parent_name]):
-        compact = re.match(r"^(?P<ini>\S+)\s+(?P<id>\S+)\s+(?P<name>.+)$", text)
-        if compact:
-            return ParentLink(parent_ini=compact.group("ini"), parent_id=compact.group("id"), parent_name=compact.group("name").strip())
-
-    return parsed
 
 
 def parse_package_export(path: str | Path) -> ParsedPackage:
@@ -86,23 +52,30 @@ def parse_package_export(path: str | Path) -> ParsedPackage:
 
     def flush_record() -> None:
         nonlocal current_record
-        if current_record and (current_record.ini or current_record.record_id or current_record.record_name):
+        if current_record and any(
+            [
+                current_record.ini,
+                current_record.record_id,
+                current_record.record_name,
+                current_record.group,
+                current_record.dat,
+            ]
+        ):
             result.add_or_merge_record(current_record)
         current_record = None
 
     for raw_line in text.splitlines():
-        line = raw_line.rstrip("\n")
+        line = raw_line.rstrip()
         if not line.strip():
             continue
 
-        commentless = _clean_comment_prefix(line)
         for meta_key, pattern in META_PATTERNS.items():
-            m = pattern.match(commentless)
+            m = pattern.match(line)
             if m:
                 setattr(result, meta_key, m.group(1).strip())
                 break
 
-        detected = _section_from_line(commentless)
+        detected = _section_from_line(line)
         if detected:
             flush_record()
             section = detected
@@ -111,74 +84,62 @@ def parse_package_export(path: str | Path) -> ParsedPackage:
         if section is None:
             continue
 
-        if re.match(r"^\s*[-=]{3,}\s*$", commentless):
+        if re.match(r"^\s*[-=]{3,}\s*$", line):
             flush_record()
             continue
 
-        record_match = RECORD_LINE_PATTERN.match(commentless)
-        if (
-            not line.lstrip().startswith("#")
-            and record_match
-            and record_match.group(1).upper() not in {"INI", "ID", "IEN", "NAME", "GROUP", "DAT", "ITEM", "LINE"}
-        ):
+        if re.match(r"^\s*record\b", line, re.IGNORECASE):
             flush_record()
             current_record = _new_record(section)
-            current_record.ini = record_match.group(1).strip()
-            current_record.record_id = record_match.group(2).strip()
-            continue
-
-        if re.match(r"^\s*record\b", commentless, re.IGNORECASE):
-            flush_record()
-            current_record = _new_record(section)
-            continue
 
         if current_record is None:
             current_record = _new_record(section)
 
-        if DIRECT_PARENT_PATTERN.match(commentless):
-            parent = _parse_direct_parent(commentless)
-            current_record.add_parent_link(parent)
-            continue
-
-        group_match = re.match(r"^\s*Group\s*:\s*(.+)$", commentless, re.IGNORECASE)
-        if group_match:
-            current_record.group = group_match.group(1).strip()
+        parent_match = DIRECT_PARENT_PATTERN.match(line)
+        if parent_match:
+            current_record.parent_ini = parent_match.group("parent_ini").strip()
+            current_record.parent_id = parent_match.group("parent_id").strip()
+            current_record.parent_name = parent_match.group("parent_name").strip()
             continue
 
         matched = False
-        for hit in INLINE_PATTERN.finditer(commentless):
-            key = hit.group(1).strip().lower()
-            value = hit.group(2).strip()
-            matched = True
-            if key == "ini":
-                current_record.ini = current_record.ini or value
-            elif key in {"id", "ien"}:
-                current_record.record_id = current_record.record_id or value
-            elif key == "name":
-                current_record.record_name = current_record.record_name or value
-            elif key == "group":
-                current_record.group = current_record.group or value
-            elif key == "dat":
-                current_record.dat = current_record.dat or value
-            elif key == "item":
-                current_record.item = current_record.item or value
-            elif key == "line":
-                current_record.line = current_record.line or value
+        for attr, pattern in KEY_PATTERNS.items():
+            m = pattern.match(line)
+            if m:
+                setattr(current_record, attr, m.group(1).strip())
+                matched = True
+                break
         if matched:
             continue
 
-        if line.strip().startswith("#") and commentless and not re.search(r":", commentless):
-            if not current_record.record_name:
-                current_record.record_name = commentless
-            else:
-                current_record.special_handling = (
-                    f"{current_record.special_handling}; {commentless}" if current_record.special_handling else commentless
-                )
+        inline_hits = list(INLINE_PATTERN.finditer(line))
+        if inline_hits:
+            for hit in inline_hits:
+                key = hit.group(1).strip().lower()
+                value = hit.group(2).strip()
+                if key == "ini":
+                    current_record.ini = current_record.ini or value
+                elif key in {"id", "ien"}:
+                    current_record.record_id = current_record.record_id or value
+                elif key == "name":
+                    current_record.record_name = current_record.record_name or value
+                elif key == "group":
+                    current_record.group = current_record.group or value
+                elif key == "dat":
+                    current_record.dat = current_record.dat or value
+                elif key == "item":
+                    current_record.item = current_record.item or value
+                elif key == "line":
+                    current_record.line = current_record.line or value
             continue
 
-        current_record.special_handling = (
-            f"{current_record.special_handling}; {commentless}" if current_record.special_handling else commentless
-        )
+        if line.strip().startswith("#"):
+            continue
+
+        if not current_record.special_handling:
+            current_record.special_handling = line.strip()
+        else:
+            current_record.special_handling = f"{current_record.special_handling}; {line.strip()}"
 
     flush_record()
     return result
@@ -210,7 +171,11 @@ def parse_evaluate_export(path: str | Path) -> dict[tuple[str, str, str], str]:
         )
         if key_match:
             flush()
-            current_key = (key_match.group("ini").strip(), key_match.group("id").strip(), key_match.group("name").strip())
+            current_key = (
+                key_match.group("ini").strip(),
+                key_match.group("id").strip(),
+                key_match.group("name").strip(),
+            )
             continue
 
         if current_key is None:
