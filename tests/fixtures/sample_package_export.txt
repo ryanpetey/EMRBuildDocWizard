@@ -1,0 +1,37 @@
+Package Title: Ambulatory Build Pack
+Package Comment: Includes scheduling and navigator updates
+INI: EAP
+
+RECORDS
+---------------------------------
+Record
+Group: SCHEDULING
+INI: EAP
+ID: 1001
+Name: Visit Type - Annual Wellness
+DAT: 2025-01-10
+Item: 1
+Line: 34
+Special Handling: Requires post-deploy validation
+
+Record
+Group: NAVIGATOR
+INI: LQF
+ID: 2001
+Name: Preventive Care Navigator
+Direct Parent: EAP 1001 Visit Type - Annual Wellness
+DAT: 2025-01-11
+Item: 2
+Line: 67
+
+DEPENDENCIES - RECORDS
+---------------------------------
+Record
+Group: ORDER SETS
+INI: LQD
+ID: 3001
+Name: Wellness Labs Panel
+Direct Parent: LQF 2001 Preventive Care Navigator
+DAT: 2025-01-12
+Item: 8
+Line: 12
